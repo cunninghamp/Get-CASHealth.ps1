@@ -35,6 +35,7 @@ http://www.bhargavs.com/index.php/2014/03/17/ignoring-ssl-trust-in-powershell-us
 
 Change Log
 V1.00, 7/5/2015 - Initial version
+V1.01, 29/5/2015 - Bug fixes for Autodiscover SCP checks
 #>
 
 #requires -version 3
@@ -170,7 +171,7 @@ foreach ($site in $sites)
     $SiteActiveSyncInternalUrls = @()
     $SiteActiveSyncExternalUrls = @()
 
-    $SiteAutodiscoverUrl = @()
+    $SiteAutodiscoverUrls = @()
 
     $CASinSite = @($ClientAccessServers | Where {$_.Site -eq $site.Name})
 
@@ -329,9 +330,9 @@ foreach ($site in $sites)
     foreach ($CAS in $CASinSite)
     {
         $CASServer = Get-ClientAccessServer $CAS.Name
-        [string]$AutodiscoverSCP = (Get-ClientAccessServer $CAS.Name).AutoDiscoverServiceInternalUri
-        $CASAutodiscoverUrl = $AutodiscoverSCP.Replace("Autodiscover.xml","")
-        if (!($SiteAutodiscoverUrls -Contains $CASAutodiscoverUrl.InternalURL.AbsoluteUri)) {$SiteActiveSyncInternalUrls += $CASAutodiscoverUrl.InternalURL.AbsoluteUri}
+        [string]$AutodiscoverSCP = ($CASServer).AutoDiscoverServiceInternalUri
+        $CASAutodiscoverUrl = $AutodiscoverSCP.Replace("/Autodiscover.xml","")
+        if (!($SiteAutodiscoverUrls -Contains $CASAutodiscoverUrl)) {$SiteAutodiscoverUrls += $CASAutodiscoverUrl}
     }
 
     if ($SiteAutodiscoverUrls.Count -gt 1) { Write-Warning "More than 1 Autodiscover internal URL found in site"}
@@ -374,7 +375,7 @@ foreach ($site in $sites)
         $result = Test-CASURL $url
     }
 
-    foreach ($url in $SiteAutodiscoverUrl)
+    foreach ($url in $SiteAutodiscoverUrls)
     {
         $result = Test-CASURL $url
     }
@@ -407,7 +408,7 @@ foreach ($site in $sites)
         $result = Test-CASURL $url
     }
 
-    foreach ($url in $SIteMAPIExternalUrls)
+    foreach ($url in $SiteMAPIExternalUrls)
     {
         $result = Test-CASURL $url
     }
