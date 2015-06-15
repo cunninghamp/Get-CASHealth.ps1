@@ -1,4 +1,4 @@
-# Get-CASHealth.ps1 - Exchange Server 2013 Client Access Health Check
+# Get-CASHealthCheck.ps1 - Exchange Server 2013 Client Access Health Check
 
 This PowerShell script checks the health of each Exchange 2013 client protocol by making a web request for the /healthcheck.htm file in each virtual directory.
 
