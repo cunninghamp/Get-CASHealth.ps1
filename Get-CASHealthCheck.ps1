@@ -87,7 +87,7 @@ function Test-CASURL() {
     try
     {
         #[System.Net.ServicePointManager]::ServerCertificateValidationCallback = $null
-        $web = Invoke-WebRequest -Uri "$testurl" -ErrorAction STOP
+        $web = Invoke-WebRequest -Uri "$testurl" -UseBasicParsing -ErrorAction STOP
         if ($web.StatusCode -eq "200")
         {
             Write-Host -ForegroundColor Green "OK"
